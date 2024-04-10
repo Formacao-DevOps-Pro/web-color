@@ -33,6 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [CI-GREEN, ]
     steps:
+      - uses: actions/checkout@v3.1.0
       - uses: azure/k8s-set-context@v4
         with:
           method: kubeconfig
