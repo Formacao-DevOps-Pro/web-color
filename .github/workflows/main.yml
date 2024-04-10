@@ -27,7 +27,7 @@ jobs:
           file: ./src/Dockerfile
           push: true
           tags: |
-            fabricioveronez/app-trash:green
+            fabricioveronez/app-trash:${{ github.run_number }}
 
   CD-DEV:
     runs-on: ubuntu-latest
@@ -43,4 +43,4 @@ jobs:
           namespace: 'default'
           manifests: |
             k8s/deployment.yaml
-          images: fabricioveronez/app-trash:green
+          images: fabricioveronez/app-trash:${{ github.run_number }}
