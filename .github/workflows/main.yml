@@ -6,7 +6,8 @@ on:
   workflow_dispatch:
     
 jobs:
-  CI-GREEN:
+  CI-APP:
+    name: CI - Aplicação
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.1.0
@@ -29,10 +30,10 @@ jobs:
           tags: |
             fabricioveronez/app-trash:${{ github.run_number }}
 
-  CD-DEV:
+  CD-HOMOLOG:
     name: CD - Homologação
     runs-on: ubuntu-latest
-    needs: [CI-GREEN, ]
+    needs: [CI-APP]
     environment: 
       name: homologacao
     steps:
@@ -52,7 +53,7 @@ jobs:
   CD-PROD:
     name: CD - Produção
     runs-on: ubuntu-latest
-    needs: [CI-GREEN, ]
+    needs: [CD-HOMOLOG]
     environment: 
       name: producao
     steps:
