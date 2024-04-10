@@ -6,31 +6,6 @@ on:
   workflow_dispatch:
     
 jobs:
-  CI-BLUE:
-    runs-on: ubuntu-latest
-    
-    steps:
-      - uses: actions/checkout@v3.1.0
-      
-      - name: Autenticação no Docker Hub
-        uses: docker/login-action@v2.1.0
-        with:
-          username: ${{ secrets.DOCKERHUB_USER }}
-          password: ${{ secrets.DOCKERHUB_PWD }}
-      
-      - name: Criando o arquivo HTML com o blue page
-        run: sed "s/{{COLOR}}/blue/g" ./src/templates/index.html.template > ./src/templates/index.html      
-
-      - name: Construção da imagem Docker do blue page
-        uses: docker/build-push-action@v3.2.0
-        with: 
-          context: ./src
-          file: ./src/Dockerfile
-          push: true
-          tags: |
-            fabricioveronez/web-color:blue
-            fabricioveronez/web-page:blue
-
   CI-GREEN:
     runs-on: ubuntu-latest
     steps:
@@ -52,8 +27,20 @@ jobs:
           file: ./src/Dockerfile
           push: true
           tags: |
-            fabricioveronez/web-color:green
-            fabricioveronez/web-page:green
+            fabricioveronez/app-trash:green
 
-
+  CD-DEV:
+    runs-on: ubuntu-latest
+    needs: [CI-GREEN, ]
+    steps:
+      - uses: azure/k8s-set-context@v4
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.K8S_CONFIG }}
     
+      - uses: Azure/k8s-deploy@v5
+        with:
+          namespace: 'default'
+          manifests: |
+            k8s/deployment.yaml
+          images: fabricioveronez/app-trash:green

@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-color
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-color
+  template:
+    metadata:
+      labels:
+        app: web-color
+    spec:
+      containers:
+      - image: fabricioveronez/app-trash:green
+        name: app-trash
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-color
+spec:
+  selector:
+    app: web-color
+  ports:
+  - port: 80
+    targetPort: 80
+  type: LoadBalancer
